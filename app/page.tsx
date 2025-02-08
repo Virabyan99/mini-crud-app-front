@@ -154,7 +154,7 @@ const HomePage = () => {
               ⚠️ Confirm Deletion
             </DialogTitle>
             <p className="text-gray-600 mt-2">
-              This action <strong>cannot be undone.</strong> Are you sure you want to delete this item?
+              This action! <strong>cannot be undone.</strong> Are you sure you want to delete this item?
             </p>
           </DialogHeader>
           <DialogFooter className="flex justify-center gap-4 mt-4">
