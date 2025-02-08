@@ -1,8 +1,21 @@
 "use client";
 
-import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 type Item = {
   id: number;
@@ -12,31 +25,19 @@ type Item = {
 };
 
 const HomePage = () => {
-  const [items, setItems] = useState<Item[]>([]); // State to store items
-  const [loading, setLoading] = useState(true); // State to handle loading state
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteItemId, setDeleteItemId] = useState<number | null>(null); // State for delete confirmation
 
   // Fetch all items from the API
   const fetchItems = async () => {
     try {
-      const url = "http://localhost:8787/api/items"; // Backend API endpoint
+      const url = "http://localhost:8787/api/items";
       console.log("Fetching data from:", url);
-  
+
       const res = await fetch(url);
-  
-      console.log("Response status:", res.status); // Log response status
-      console.log("Response headers:", res.headers); // Log headers
-  
-      const contentType = res.headers.get("content-type");
-      console.log("Content-Type:", contentType); // Debugging: Ensure it's JSON
-  
-      // ✅ Read response as text first for debugging
-      const textResponse = await res.text();
-      console.log("Raw response:", textResponse); // Debugging: Log raw response
-  
-      // ✅ Convert to JSON manually (fixes potential parsing issues)
-      const data = JSON.parse(textResponse);
-      
-      console.log("Parsed JSON:", data); // Debugging: Log parsed JSON
+      const data = await res.json();
+
       setItems(data.items || []);
     } catch (error) {
       console.error("Error fetching items:", error);
@@ -44,36 +45,136 @@ const HomePage = () => {
       setLoading(false);
     }
   };
-  
-  // Fetch items when the component mounts
+
+  // Handle item deletion
+  const handleDelete = async () => {
+    if (!deleteItemId) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8787/api/items/${deleteItemId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        setItems(items.filter((item) => item.id !== deleteItemId)); // Remove item from UI
+        setDeleteItemId(null); // Close dialog
+      } else {
+        console.error("Failed to delete item");
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
+
   useEffect(() => {
     fetchItems();
   }, []);
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1>Items List</h1>
-      <p>Welcome to the full-stack CRUD application!</p>
+    <div className="container mx-auto py-10">
+      {/* Top Section with Title and Create Button */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-extrabold text-gray-800">📦 Items List</h1>
+        <Link href="/create">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md shadow-md">
+            ➕ Create New Item
+          </Button>
+        </Link>
+      </div>
 
-      {/* Display loading state */}
-      {loading && <p>Loading items...</p>}
+      <p className="text-gray-600 mb-8 text-lg">
+        Welcome to the full-stack CRUD application! Manage your items easily.
+      </p>
 
-      {/* Display the list of items */}
-      <div>
+      {/* Loading State */}
+      {loading && <p className="text-center text-lg">⏳ Loading items...</p>}
+
+      {/* Items Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {items.length > 0 ? (
           items.map((item) => (
-            <div key={item.id}>
-              <h3>{item.name}</h3>
-              <p>Price: ${item.price}</p>
-              <p>Count: {item.count}</p>
-            </div>
+            <Card
+              key={item.id}
+              className="relative shadow-lg hover:shadow-2xl transition p-5 rounded-lg border border-gray-200"
+            >
+              {/* Card Header with Edit Button Positioned in the Top-Right */}
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-xl font-semibold">{item.name}</CardTitle>
+                <Link href={`/edit/${item.id}`}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-blue-600 border-blue-600 hover:bg-blue-100"
+                  >
+                    ✏️ Edit
+                  </Button>
+                </Link>
+              </div>
+
+              <CardContent className="mt-3 text-lg">
+                <p className="text-gray-700">
+                  <strong>💲 Price:</strong> ${item.price}
+                </p>
+                <p className="text-gray-700">
+                  <strong>📦 Count:</strong> {item.count}
+                </p>
+              </CardContent>
+
+              {/* Delete Button at Bottom-Right */}
+              <div className="flex justify-end mt-5">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => setDeleteItemId(item.id)}
+                  className="px-4 py-2"
+                >
+                   Delete
+                </Button>
+              </div>
+            </Card>
           ))
         ) : (
-          <p>No items available</p>
+          <p className="text-center col-span-full text-lg">
+            🚫 No items available
+          </p>
         )}
       </div>
 
-      <Button onClick={() => console.log('Button clicked!')}>Test Button</Button>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteItemId !== null}
+        onOpenChange={() => setDeleteItemId(null)}
+      >
+        <DialogContent className="p-6 max-w-md rounded-lg shadow-lg">
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-xl font-semibold text-red-600">
+              ⚠️ Confirm Deletion
+            </DialogTitle>
+            <p className="text-gray-600 mt-2">
+              This action <strong>cannot be undone.</strong> Are you sure you want to delete this item?
+            </p>
+          </DialogHeader>
+          <DialogFooter className="flex justify-center gap-4 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteItemId(null)}
+              className="w-28 border-gray-500 text-gray-700"
+            >
+               Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              className="w-28 bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
