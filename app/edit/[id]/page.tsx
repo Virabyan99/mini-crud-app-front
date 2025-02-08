@@ -1,5 +1,8 @@
 "use client";
 
+export const runtime = 'edge';
+
+
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation"; // Get the ID from the URL
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
