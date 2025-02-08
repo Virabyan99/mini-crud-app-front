@@ -32,7 +32,7 @@ const HomePage = () => {
   // Fetch all items from the API
   const fetchItems = async () => {
     try {
-      const url = "https://mini-crud-app-front.pages.dev/api/items";
+      const url = "https://mini-crud-app.gmparstone99.workers.dev/api/items";
       console.log("Fetching data from:", url);
 
       const res = await fetch(url);
