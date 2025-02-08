@@ -74,7 +74,7 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="w-[90%] mx-auto py-10">
       {/* Top Section with Title and Create Button */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-4xl font-extrabold text-gray-800">📦 Items List</h1>
