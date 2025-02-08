@@ -24,7 +24,7 @@ const EditItemPage = () => {
   useEffect(() => {
     const fetchItem = async () => {
       try {
-        const res = await fetch(`http://localhost:8787/api/items/${id}`);
+        const res = await fetch(`https://mini-crud-app.gmparstone99.workers.dev/api/items/${id}`);
         if (!res.ok) {
           throw new Error("Failed to fetch item data.");
         }
@@ -56,7 +56,7 @@ const EditItemPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8787/api/items/${id}`, {
+      const response = await fetch(`https://mini-crud-app.gmparstone99.workers.dev/api/items/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -28,7 +28,7 @@ const CreateItemPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8787/api/items", {
+      const response = await fetch("https://mini-crud-app.gmparstone99.workers.dev/api/items", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

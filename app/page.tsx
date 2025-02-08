@@ -32,7 +32,7 @@ const HomePage = () => {
   // Fetch all items from the API
   const fetchItems = async () => {
     try {
-      const url = "http://localhost:8787/api/items";
+      const url = "https://1bfe81fe.mini-crud-app-front.pages.dev/api/items";
       console.log("Fetching data from:", url);
 
       const res = await fetch(url);
@@ -52,7 +52,7 @@ const HomePage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8787/api/items/${deleteItemId}`,
+        `https://mini-crud-app.gmparstone99.workers.dev/api/items/${deleteItemId}`,
         {
           method: "DELETE",
         }
